@@ -8,9 +8,6 @@
 
 #include <limits>
 
-#define CAMERA_DISPLAY_MODE 1
-#define SOURCE_DISPLAY_MODE 2
-
 class testApp : public ofBaseApp {
 public:
 	void setup();
@@ -21,9 +18,11 @@ public:
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
-	void loadFace(string face);
+	void loadPoints(string filename);
+	void loadFace(string filename);
 	
 	void keyPressed(int key);
+	void keyReleased(int key);
 
 	ofxFaceTrackerThreaded camTracker;
 	ofVideoGrabber cam;
@@ -31,11 +30,14 @@ public:
 	ofxFaceTracker srcTracker;
 	ofImage src;
 	vector<ofVec2f> srcPoints;
-	int selectedSrcPointIndex;
+	vector<int> selectedPoints;
+	vector<ofVec2f> selectedPointsToMouse;
 	
 	bool cloneReady;
 	Clone clone;
 	ofFbo srcFbo, maskFbo;
-
-	int displayMode;
+	
+	static const int lines [];
+	
+	long mousePressedTime;
 };
