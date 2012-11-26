@@ -107,6 +107,7 @@ void testApp::draw() {
 		ofSetColor(255,128,0);
 		ofCircle(xOffset + p[0], p[1], 4);
 	}
+	ofSetColor(255,255,255);
 	
 	if (selectArea) {
 		int startX = selectAreaStart[0];
