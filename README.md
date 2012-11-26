@@ -6,6 +6,10 @@ I built on Kyle McDonald and Arturo Castro's face substitution work by creating 
 Demo video
 http://vimeo.com/54324560
 
+![Guy Fawkes Mesh Edit](https://raw.github.com/danielgm/FaceSubstitutionEditor/master/bits/gfawkesedit.png "Guy Fawkes Mesh Edit")
+
+![Rhea Swaps Brad Pitt](https://raw.github.com/danielgm/FaceSubstitutionEditor/master/bits/rheabrad.png "Rhea Swaps Brad Pitt")
+
 Jason Saragih's FaceTracker library
 http://web.mac.com/jsaragih/FaceTracker/FaceTracker.html
 
