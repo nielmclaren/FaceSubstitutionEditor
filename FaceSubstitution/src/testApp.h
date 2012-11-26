@@ -31,7 +31,11 @@ public:
 	ofImage src;
 	vector<ofVec2f> srcPoints;
 	vector<int> selectedPoints;
-	vector<ofVec2f> selectedPointsToMouse;
+	vector<int> dragPoints;
+	vector<ofVec2f> dragPointsToMouse;
+	
+	bool selectArea;
+	ofVec2f selectAreaStart;
 	
 	bool cloneReady;
 	Clone clone;

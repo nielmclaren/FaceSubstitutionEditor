@@ -21,6 +21,8 @@ void testApp::setup() {
 	srcTracker.setup();
 	srcTracker.setIterations(25);
 	srcTracker.setAttempts(4);
+	
+	selectArea = false;
 }
 
 void testApp::update() {
@@ -105,6 +107,15 @@ void testApp::draw() {
 		ofSetColor(255,128,0);
 		ofCircle(xOffset + p[0], p[1], 4);
 	}
+	
+	if (selectArea) {
+		int startX = selectAreaStart[0];
+		int startY = selectAreaStart[1];
+		
+		ofNoFill();
+		ofSetColor(255, 255, 255);
+		ofRect(startX, startY, mouseX - startX, mouseY - startY);
+	}
 }
 
 void testApp::loadPoints(string filename) {
@@ -156,9 +167,9 @@ void testApp::mouseDragged(int x, int y, int button) {
 		x -= xOffset;
 		
 		if (button == 0) {
-			for (int i = 0; i < selectedPointsToMouse.size(); i++) {
-				ofVec2f d = selectedPointsToMouse[i];
-				srcPoints[selectedPoints[i]].set(x + d[0], y + d[1]);
+			for (int i = 0; i < dragPoints.size(); i++) {
+				ofVec2f d = dragPointsToMouse[i];
+				srcPoints[dragPoints[i]].set(x + d[0], y + d[1]);
 			}
 		}
 	}
@@ -166,7 +177,7 @@ void testApp::mouseDragged(int x, int y, int button) {
 
 void testApp::mousePressed(int x, int y, int button) {
 	mousePressedTime = ofGetSystemTime();
-	selectedPointsToMouse.clear();
+	dragPointsToMouse.clear();
 	
 	int xOffset = cam.getWidth();
 	if (x < xOffset) {
@@ -188,23 +199,46 @@ void testApp::mousePressed(int x, int y, int button) {
 		}
 		
 		if (nearestDsq < 25) {
-			selectedPoints.clear();
-			selectedPoints.push_back(nearestIndex);
-			
 			if (find(selectedPoints.begin(), selectedPoints.end(), nearestIndex) != selectedPoints.end()) {
-				// Going to be a drag. Record vector from mouse to each selected point.
-				for (int i = 0; i < selectedPoints.size(); i++) {
+				// If the user pressed a selected point then drag the selected points.
+				dragPoints = selectedPoints;
+				for (int i = 0; i < dragPoints.size(); i++) {
 					ofVec2f p = srcPoints[selectedPoints[i]];
-					selectedPointsToMouse.push_back(ofVec2f(p[0] - x, p[1] - y));
+					dragPointsToMouse.push_back(ofVec2f(p[0] - x, p[1] - y));
 				}
 			}
+			else {
+				// If the user pressed an unselected point then drag it and ignore the selection.
+				ofVec2f p = srcPoints[nearestIndex];
+				dragPoints.push_back(nearestIndex);
+				dragPointsToMouse.push_back(ofVec2f(p[0] - x, p[1] - y));
+			}
 		}
-		
+		else {
+			selectAreaStart.set(xOffset + x, y);
+			selectArea = true;
+		}
 	}
 }
 
 void testApp::mouseReleased(int x, int y, int button) {
 	int xOffset = cam.getWidth();
+	
+	if (selectArea) {
+		selectedPoints.clear();
+		ofRectangle r = ofRectangle(fmin(selectAreaStart[0], x) - xOffset,
+									fmin(selectAreaStart[1], y),
+									abs(selectAreaStart[0] - x),
+									abs(selectAreaStart[1] - y));
+		for (int i = 0; i < srcPoints.size(); i++) {
+			ofVec2f p = srcPoints[i];
+			if (r.x < p.x && p.x < r.x + r.width
+				&& r.y < p.y && p.y < r.y + r.height) {
+				selectedPoints.push_back(i);
+			}
+		}
+	}
+	
 	if (x < xOffset) {
 	}
 	else {
@@ -237,6 +271,9 @@ void testApp::mouseReleased(int x, int y, int button) {
 			}	
 		}
 	}
+	
+	selectArea = false;
+	dragPoints.clear();
 }
 
 void testApp::keyPressed(int key) {
